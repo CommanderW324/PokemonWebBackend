@@ -10,5 +10,6 @@ class Pokemon(models.Model):
     type = models.CharField(max_length=100)
     # Model the many to one relationship
     trainer = models.ForeignKey(User, on_delete=models.CASCADE, null=True)
+    level = models.IntegerField()
 
 
