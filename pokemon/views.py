@@ -14,7 +14,7 @@ def add_or_view(request):
     print(request)
     user = request.user
     if request.method == 'POST':
-        pokemon_detail = Pokemon.objects.get(id=request.data.id)
+        pokemon_detail = Pokemon.objects.get(id=request.data['id'])
         print(pokemon_detail)
         serializer = PokemonDetailSerializer(Pokemon, data=request.data)
         if serializer.is_valid():
