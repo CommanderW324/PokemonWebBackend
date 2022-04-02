@@ -22,6 +22,9 @@ EMAIL_HOST_USER = os.environ.get('SENDING_EMAIL')
 EMAIL_HOST_PASSWORD = os.environ.get('SENDING_EMAIL_PASSWORD')
 EMAIL_USE_TLS = True
 DROPBOX_API_TOKEN = os.environ.get('DROPBOX_API_TOKEN')
+DOMAIN = os.environ.get("FRONTEND_DOMAIN")
+SITE_NAME = os.environ.get("DOMAIN_NAME")
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -128,7 +131,22 @@ USE_I18N = True
 
 USE_TZ = True
 
-
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+}
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}
+# Djoser Setup
+DJOSER = {
+    'PASSWORD_RESET_CONFIRM_URL': 'password/reset/confirm/{uid}/{token}',
+    'USERNAME_RESET_CONFIRM_URL': 'username/reset/confirm/{uid}/{token}',
+    'ACTIVATION_URL': 'activate/{uid}/{token}',
+    'SEND_ACTIVATION_EMAIL': True,
+    'SERIALIZERS': {},
+}
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 

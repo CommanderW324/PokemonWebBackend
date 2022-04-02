@@ -7,20 +7,19 @@ from pokemon.serializers import *
 
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 
 @api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
 def add_or_view(request):
-    print(request)
     user = request.user
     if request.method == 'POST':
-        pokemon_detail = Pokemon.objects.get(id=request.data['id'])
-        print(pokemon_detail)
-        serializer = PokemonDetailSerializer(Pokemon, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        new_captured_pokemon = Pokemon.objects.get(id=request.data['id'])
+        new_captured_pokemon.trainer = user
+        new_captured_pokemon.save(update_fields=['trainer'])
+        serialize = PokemonSerializer(new_captured_pokemon)
+        return Response(serialize.data)
     
     try:
         captured_pokemon = Pokemon.objects.filter(trainer=user)
@@ -30,6 +29,7 @@ def add_or_view(request):
     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
 def release_pokemon(request):
     released_pokemon_id = request.data['id']
     try:
@@ -42,6 +42,7 @@ def release_pokemon(request):
     
 
 @api_view(['GET'])
+@permission_classes([IsAuthenticated])
 def uncaptured_pokemon(request):
     user = request.user
     print(user)
@@ -55,7 +56,10 @@ def uncaptured_pokemon(request):
 
 
 
-class PokemonViewSet(viewsets.ModelViewSet):
+class AllPokemonViewSet(viewsets.ModelViewSet):
     queryset = Pokemon.objects.all()
     serializer_class = PokemonSerializer
-    permission_classes = [permissions.IsAuthenticated]
+
+class WildPokemonViewSet(viewsets.ModelViewSet):
+    queryset = Pokemon.objects.filter(trainer=None)
+    serializer_class = PokemonSerializer    

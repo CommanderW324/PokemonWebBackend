@@ -18,15 +18,16 @@ from django.urls import include, path, re_path
 from rest_framework import routers
 from pokemon.views import *
 
-pokemon_router = routers.DefaultRouter()
-pokemon_router.register('allpokemon', PokemonViewSet);
+# pokemon_router = routers.DefaultRouter()
+# pokemon_router.register('allpokemon', PokemonViewSet);
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('pokemon/allpokemon/', PokemonViewSet.as_view({'get':'list'})),
+    path('pokemon/allpokemon/', AllPokemonViewSet.as_view({'get':'list'})),
     path('pokemon/uncapturedpokemon/', uncaptured_pokemon),
     path('pokemon/capturedpokemon/', add_or_view),
     path('pokemon/releasepokemon/', release_pokemon),
+    path('pokemon/wildpokemon/', WildPokemonViewSet.as_view({'get':'list'})),
     path('auth/', include('djoser.urls')),
     path('auth/', include('djoser.urls.jwt')),
     re_path(r"^auth/", include("djoser.urls.authtoken")),
