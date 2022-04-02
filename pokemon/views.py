@@ -15,23 +15,23 @@ from rest_framework.permissions import IsAuthenticated
 def add_or_view(request):
     user = request.user
     if request.method == 'POST':
-        new_captured_pokemon = Pokemon.objects.get(id=request.data['id'])
+        new_captured_pokemon = Pokemon.objects.get(id=int(request.data['id']))
         new_captured_pokemon.trainer = user
         new_captured_pokemon.save(update_fields=['trainer'])
-        serialize = PokemonSerializer(new_captured_pokemon)
+        serialize = PokemonDetailSerializer(new_captured_pokemon)
         return Response(serialize.data)
     
     try:
         captured_pokemon = Pokemon.objects.filter(trainer=user)
     except Pokemon.DoesNotExist:
         return Response(status=status.HTTP_404_NOT_FOUND)
-    serializer = PokemonSerializer(captured_pokemon, many=True)
+    serializer = PokemonDetailSerializer(captured_pokemon, many=True)
     return Response(serializer.data)
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def release_pokemon(request):
-    released_pokemon_id = request.data['id']
+    released_pokemon_id = int(request.data['id'])
     try:
         released_pokemon = Pokemon.objects.get(id=released_pokemon_id)
         released_pokemon.trainer= None
